@@ -66,8 +66,6 @@ main(int argc, char* argv[])
   // Read optional command-line parameters (e.g., enable visualizer with ./waf --run=<> --visualize
   CommandLine cmd;
   cmd.Parse(argc, argv);
-  //test
-  //NS_LOG_DEBUG("who are u");
   
   // Creating 3x3 topology
   PointToPointHelper p2p;
@@ -76,6 +74,9 @@ main(int argc, char* argv[])
 
   // Install NDN stack on all nodes
   ndn::StackHelper ndnHelper;
+  //ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize","4096");
+  ndnHelper.setCsSize(10240);
+  ndnHelper.setPolicy("nfd::cs::priority_fifo");
   ndnHelper.InstallAll();
 
   // Set BestRoute strategy
@@ -85,14 +86,11 @@ main(int argc, char* argv[])
   ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
   ndnGlobalRoutingHelper.InstallAll();
 
-  // Getting containers for the consumer/producer
-  //Ptr<Node> producer = grid.GetNode(2, 2);
-  //NodeContainer consumerNodes;
-  //consumerNodes.Add(grid.GetNode(0, 0));
 
   // Install NDN applications
-  std::string pre = "/prefix";
-  ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
+  std::string pre = "/%FE%0";//至今无法理解
+  //ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
+  ndn::AppHelper consumerHelper("ns3::ndn::ConsumerZipfMandelbrot");
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   // add my prefix;
   std::map<Ptr<Node>,std::string> prefixmap;
@@ -108,7 +106,7 @@ main(int argc, char* argv[])
     producerHelper.SetAttribute("PayloadSize", StringValue("1024"));
     producerHelper.Install(*node);
     ndnGlobalRoutingHelper.AddOrigin(prefix, *node);
-    cout<<prefix<<endl;
+    //cout<<prefix<<endl;
   }
 
   //NodeContainer consumerNodes;
@@ -118,10 +116,11 @@ main(int argc, char* argv[])
   {
     for (NodeList::Iterator nodex = NodeList::Begin(); nodex != NodeList::End(); nodex++)
     {
-      consumerHelper.SetPrefix(prefixmap[*nodex]);
+      //consumerHelper.SetPrefix(prefixmap[*node]);
       //cout<<prefixmap[*node]<<endl;
-      consumerHelper.SetAttribute("Frequency", StringValue("100")); // 100 interests a second
-      consumerHelper.Install(*node);
+      consumerHelper.SetAttribute("NumberOfContents", StringValue("100"));
+      consumerHelper.SetAttribute("Frequency", StringValue("100"));
+      consumerHelper.Install(*nodex);
     }
   }
   // Add /prefix origins to ndn::GlobalRouter
@@ -132,6 +131,7 @@ main(int argc, char* argv[])
 
   Simulator::Stop(Seconds(20.0));
 
+  //ndn::CsTracer::InstallAll("cs-trace.txt", Seconds(1));
   Simulator::Run();
   Simulator::Destroy();
 
