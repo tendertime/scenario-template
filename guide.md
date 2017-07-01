@@ -17,7 +17,5 @@
 
 [某git project](https://github.com/Telmat2015/NDNWork)
 
-<<<<<<< HEAD
 [ns-3 Tracer 原理以及应用](http://blog.csdn.net/klein15/article/details/53729794)
-=======
->>>>>>> 40f40158792f1c785d6647a5ed18f6fe48eac8cd
+

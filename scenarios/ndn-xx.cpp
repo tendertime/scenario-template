@@ -31,30 +31,6 @@
 
 namespace ns3 {
 
-/**
- * This scenario simulates a grid topology (using PointToPointGrid module)
- *
- * (consumer) -- ( ) ----- ( )
- *     |          |         |
- *    ( ) ------ ( ) ----- ( )
- *     |          |         |
- *    ( ) ------ ( ) -- (producer)
- *
- * All links are 1Mbps with propagation 10ms delay.
- *
- * FIB is populated using NdnGlobalRoutingHelper.
- *
- * Consumer requests data from producer with frequency 100 interests per second
- * (interests contain constantly increasing sequence number).
- *
- * For every received interest, producer replies with a data packet, containing
- * 1024 bytes of virtual payload.
- *
- * To run scenario and see what is happening, use the following command:
- *
- *     NS_LOG=ndn.Consumer:ndn.Producer ./waf --run=ndn-grid
- */
-
 int
 main(int argc, char* argv[])
 {
@@ -74,9 +50,9 @@ main(int argc, char* argv[])
 
   // Install NDN stack on all nodes
   ndn::StackHelper ndnHelper;
-  //ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize","4096");
-  ndnHelper.setCsSize(10240);
-  ndnHelper.setPolicy("nfd::cs::priority_fifo");
+  ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize","4096");
+  //ndnHelper.setCsSize(10240);
+  //ndnHelper.setPolicy("nfd::cs::priority_fifo");
   ndnHelper.InstallAll();
 
   // Set BestRoute strategy
@@ -86,52 +62,51 @@ main(int argc, char* argv[])
   ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
   ndnGlobalRoutingHelper.InstallAll();
 
+  /*
+  ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
+  consumerHelper.SetPrefix("/%FE%01");
+  consumerHelper.SetAttribute("Frequency", StringValue("100"));
+  ApplicationContainer app = consumerHelper.Install(grid.GetNode(0, 0));
+  app.Start(Seconds(0.01));
+  */
 
-  // Install NDN applications
-  std::string pre = "/%FE%0";//至今无法理解
-  //ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
+  
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerZipfMandelbrot");
-  ndn::AppHelper producerHelper("ns3::ndn::Producer");
+  consumerHelper.SetAttribute("NumberOfContents", StringValue("9"));
+  consumerHelper.SetAttribute("Frequency", StringValue("10"));
+  for (NodeList::Iterator node = NodeList::Begin(); node != NodeList::End(); node++)   
+  {
+      consumerHelper.Install(*node);
+      ApplicationContainer app = consumerHelper.Install(*node);
+      app.Start(Seconds(0.01*(*node)->GetId()));
+  }
+
   // add my prefix;
-  std::map<Ptr<Node>,std::string> prefixmap;
-  prefixmap.insert(pair<Ptr<Node>,std::string>(grid.GetNode(2, 2),pre));
+  //std::map<Ptr<Node>,std::string> prefixmap;
+  //prefixmap.insert(pair<Ptr<Node>,std::string>(grid.GetNode(2, 2),pre));
   std::stringstream s;
+  ndn::AppHelper producerHelper("ns3::ndn::Producer");
+  producerHelper.SetAttribute("PayloadSize", StringValue("1024"));
   for (NodeList::Iterator node = NodeList::Begin(); node != NodeList::End(); node++)
   {
     s<<(*node)->GetId();
-    std::string prefix=pre+s.str();
+    std::string prefix="/%FE%0"+s.str();
     s.str("");
-    prefixmap.insert(pair<Ptr<Node>,std::string>(*node,prefix));
-    producerHelper.SetPrefix(prefix);
-    producerHelper.SetAttribute("PayloadSize", StringValue("1024"));
-    producerHelper.Install(*node);
     ndnGlobalRoutingHelper.AddOrigin(prefix, *node);
+    producerHelper.SetPrefix(prefix);
+    producerHelper.Install(*node);
     //cout<<prefix<<endl;
   }
-
-  //NodeContainer consumerNodes;
-  //consumerNodes.Add(grid.GetNode(0, 0));
-
-  for (NodeList::Iterator node = NodeList::Begin(); node != NodeList::End(); node++)   
-  {
-    for (NodeList::Iterator nodex = NodeList::Begin(); nodex != NodeList::End(); nodex++)
-    {
-      //consumerHelper.SetPrefix(prefixmap[*node]);
-      //cout<<prefixmap[*node]<<endl;
-      consumerHelper.SetAttribute("NumberOfContents", StringValue("100"));
-      consumerHelper.SetAttribute("Frequency", StringValue("100"));
-      consumerHelper.Install(*nodex);
-    }
-  }
-  // Add /prefix origins to ndn::GlobalRouter
-  //ndnGlobalRoutingHelper.AddOrigins(prefix, producer);
 
   // Calculate and install FIBs
   ndn::GlobalRoutingHelper::CalculateRoutes();
 
   Simulator::Stop(Seconds(20.0));
 
-  //ndn::CsTracer::InstallAll("cs-trace.txt", Seconds(1));
+  //ndn::CsTracer::InstallAll("cs-trace-xx.txt", Seconds(1));
+  //ndn::L3RateTracer::InstallAll("rate-trace.txt", Seconds(0.5));
+  L2RateTracer::InstallAll("drop-trace-xx.txt", Seconds(0.5));
+
   Simulator::Run();
   Simulator::Destroy();
 
