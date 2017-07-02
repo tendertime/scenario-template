@@ -101,11 +101,11 @@ main(int argc, char* argv[])
   // Calculate and install FIBs
   ndn::GlobalRoutingHelper::CalculateRoutes();
 
-  Simulator::Stop(Seconds(20.0));
+  Simulator::Stop(Seconds(5.0));
 
-  //ndn::CsTracer::InstallAll("cs-trace-xx.txt", Seconds(1));
+  ndn::CsTracer::InstallAll("cs-trace-xx.txt", Seconds(1));
   //ndn::L3RateTracer::InstallAll("rate-trace.txt", Seconds(0.5));
-  L2RateTracer::InstallAll("drop-trace-xx.txt", Seconds(0.5));
+  //L2RateTracer::InstallAll("drop-trace-xx.txt", Seconds(0.5));
 
   Simulator::Run();
   Simulator::Destroy();
