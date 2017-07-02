@@ -34,6 +34,7 @@ namespace ns3 {
 int
 main(int argc, char* argv[])
 {
+
   // Setting default parameters for PointToPoint links and channels
   Config::SetDefault("ns3::PointToPointNetDevice::DataRate", StringValue("1Mbps"));
   Config::SetDefault("ns3::PointToPointChannel::Delay", StringValue("10ms"));
@@ -43,10 +44,9 @@ main(int argc, char* argv[])
   CommandLine cmd;
   cmd.Parse(argc, argv);
   
-  // Creating 3x3 topology
-  PointToPointHelper p2p;
-  PointToPointGridHelper grid(3, 3, p2p);
-  grid.BoundingBox(100, 100, 200, 200);
+  AnnotatedTopologyReader topologyReader("", 25);
+  topologyReader.SetFileName("chinatelecom.txt");
+  topologyReader.Read();
 
   // Install NDN stack on all nodes
   ndn::StackHelper ndnHelper;

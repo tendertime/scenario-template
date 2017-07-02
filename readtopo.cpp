@@ -17,7 +17,7 @@ int main()
         if(k[5]=='n')
         {
             id=k[15]=='"'?k[14]-'0':(k[14]-'0')*10+(k[15]-'0');
-            cout<<id<<" ";
+            cout<<id<<"   "<<"NA"<<"          ";
             getline(fin,s2,'\n');
             h=s2.c_str();
             while(h[5]!='/')
@@ -27,7 +27,7 @@ int main()
                     i=22;
                     while(h[i]!='<')
                         printf("%c",h[i++]);
-                    cout<<"  ";
+                    cout<<"       ";
                 }
                 if(h[18]=='3'&&h[19]=='3')
                 {
@@ -52,7 +52,7 @@ int main()
                 printf("%c%c ",k[18],k[19]);
                 t=k[31]=='"'?k[30]-'0':(k[30]-'0')*10+(k[31]-'0');
             }
-            printf("%d\n",t);
+            printf("%d      10Mbps\n",t);
         }
     }
     return 0;
