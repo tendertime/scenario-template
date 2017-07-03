@@ -35,18 +35,12 @@ namespace ns3 {
 int
 main(int argc, char* argv[])
 {
-
-  // Setting default parameters for PointToPoint links and channels
-  Config::SetDefault("ns3::PointToPointNetDevice::DataRate", StringValue("1Mbps"));
-  Config::SetDefault("ns3::PointToPointChannel::Delay", StringValue("10ms"));
-  Config::SetDefault("ns3::DropTailQueue::MaxPackets", StringValue("10"));
-
   // Read optional command-line parameters (e.g., enable visualizer with ./waf --run=<> --visualize
   CommandLine cmd;
   cmd.Parse(argc, argv);
   
   AnnotatedTopologyReader topologyReader("", 25);
-  topologyReader.SetFileName("./results/chinatelecom/chinatelecom.txt");
+  topologyReader.SetFileName("./results/geant/geant.txt");
   topologyReader.Read();
 
   // Install NDN stack on all nodes
@@ -62,19 +56,10 @@ main(int argc, char* argv[])
   // Installing global routing interface on all nodes
   ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
   ndnGlobalRoutingHelper.InstallAll();
-
-  /*
-  ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
-  consumerHelper.SetPrefix("/%FE%01");
-  consumerHelper.SetAttribute("Frequency", StringValue("100"));
-  ApplicationContainer app = consumerHelper.Install(grid.GetNode(0, 0));
-  app.Start(Seconds(0.01));
-  */
-
   
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerZipfMandelbrot");
-  consumerHelper.SetAttribute("NumberOfContents", StringValue("38"));
-  consumerHelper.SetAttribute("Frequency", StringValue("38"));
+  consumerHelper.SetAttribute("NumberOfContents", StringValue("37"));
+  consumerHelper.SetAttribute("Frequency", StringValue("37"));
   for (NodeList::Iterator node = NodeList::Begin(); node != NodeList::End(); node++)   
   {
       consumerHelper.Install(*node);
@@ -82,10 +67,6 @@ main(int argc, char* argv[])
       //app.Start(Seconds(0.01*(*node)->GetId()));
   }
 
-  // add my prefix;
-  //std::map<Ptr<Node>,std::string> prefixmap;
-  //prefixmap.insert(pair<Ptr<Node>,std::string>(grid.GetNode(2, 2),pre));
-  //std::stringstream s;
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetAttribute("PayloadSize", StringValue("1024"));
   for (NodeList::Iterator node = NodeList::Begin(); node != NodeList::End(); node++)

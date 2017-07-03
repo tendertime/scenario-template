@@ -29,7 +29,7 @@ int main()
                         printf("%c",h[i++]);
                     cout<<"       ";
                 }
-                if(h[18]=='3'&&h[19]=='3')
+                if(h[18]=='3'&&h[19]=='2')
                 {
                     i=22;
                     while(h[i]!='<')
@@ -52,7 +52,22 @@ int main()
                 printf("%c%c ",k[18],k[19]);
                 t=k[31]=='"'?k[30]-'0':(k[30]-'0')*10+(k[31]-'0');
             }
-            printf("%d      10Mbps\n",t);
+            printf("%d ",t);
+            getline(fin,s2,'\n');
+            h=s2.c_str();
+            while(h[5]!='/')
+            {
+                if(h[18]=='4'&&h[19]=='0')
+                {
+                    i=22;
+                    while(h[i]!='<')
+                        printf("%c",h[i++]);
+                    cout<<"       ";
+                }
+                getline(fin,s2,'\n');
+                h=s2.c_str();
+            }
+            cout<<endl;
         }
     }
     return 0;
