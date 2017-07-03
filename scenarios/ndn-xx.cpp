@@ -25,9 +25,10 @@
 #include "ns3/point-to-point-layout-module.h"
 #include "ns3/ndnSIM-module.h"
 
-#include <sstream>
+#include <stdio.h>
 #include <iostream>
 #include <map>
+#include <string>
 
 namespace ns3 {
 
@@ -45,7 +46,7 @@ main(int argc, char* argv[])
   cmd.Parse(argc, argv);
   
   AnnotatedTopologyReader topologyReader("", 25);
-  topologyReader.SetFileName("chinatelecom.txt");
+  topologyReader.SetFileName("./results/chinatelecom/chinatelecom.txt");
   topologyReader.Read();
 
   // Install NDN stack on all nodes
@@ -72,26 +73,27 @@ main(int argc, char* argv[])
 
   
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerZipfMandelbrot");
-  consumerHelper.SetAttribute("NumberOfContents", StringValue("9"));
-  consumerHelper.SetAttribute("Frequency", StringValue("10"));
+  consumerHelper.SetAttribute("NumberOfContents", StringValue("38"));
+  consumerHelper.SetAttribute("Frequency", StringValue("38"));
   for (NodeList::Iterator node = NodeList::Begin(); node != NodeList::End(); node++)   
   {
       consumerHelper.Install(*node);
-      ApplicationContainer app = consumerHelper.Install(*node);
-      app.Start(Seconds(0.01*(*node)->GetId()));
+      //ApplicationContainer app = consumerHelper.Install(*node);
+      //app.Start(Seconds(0.01*(*node)->GetId()));
   }
 
   // add my prefix;
   //std::map<Ptr<Node>,std::string> prefixmap;
   //prefixmap.insert(pair<Ptr<Node>,std::string>(grid.GetNode(2, 2),pre));
-  std::stringstream s;
+  //std::stringstream s;
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetAttribute("PayloadSize", StringValue("1024"));
   for (NodeList::Iterator node = NodeList::Begin(); node != NodeList::End(); node++)
   {
-    s<<(*node)->GetId();
-    std::string prefix="/%FE%0"+s.str();
-    s.str("");
+    char buffer[10];
+    sprintf(buffer,"%02X",(*node)->GetId());
+    std::string str=buffer;
+    std::string prefix="/%FE%"+str;
     ndnGlobalRoutingHelper.AddOrigin(prefix, *node);
     producerHelper.SetPrefix(prefix);
     producerHelper.Install(*node);
@@ -103,7 +105,7 @@ main(int argc, char* argv[])
 
   Simulator::Stop(Seconds(5.0));
 
-  ndn::CsTracer::InstallAll("cs-trace-xx.txt", Seconds(1));
+  //ndn::CsTracer::InstallAll("cs-trace-xx.txt", Seconds(1));
   //ndn::L3RateTracer::InstallAll("rate-trace.txt", Seconds(0.5));
   //L2RateTracer::InstallAll("drop-trace-xx.txt", Seconds(0.5));
 
