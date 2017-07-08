@@ -40,7 +40,10 @@ main(int argc, char* argv[])
   cmd.Parse(argc, argv);
   
   AnnotatedTopologyReader topologyReader("", 25);
-  topologyReader.SetFileName("./results/geant/geant.txt");
+  //topologyReader.SetFileName("./results/chinatelecom/chinatelecom.txt");//38
+  //topologyReader.SetFileName("./results/agis/agis.txt");//25
+  //topologyReader.SetFileName("./results/garr/garr.txt");//47
+  topologyReader.SetFileName("./results/geant/geant.txt");//37
   topologyReader.Read();
 
   // Install NDN stack on all nodes

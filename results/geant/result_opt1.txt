@@ -1,0 +1,24 @@
+20stores/%FE%02,which called/%FE%02
+20cache size1
+29stores/%FE%14,which called/%FE%14
+29cache size1
+18stores/%FE%14,which called/%FE%14
+18cache size1
+20gains185by cache/%FE%02
+20gains185by cache/%FE%02
+18gains203by cache/%FE%14
+18gains203by cache/%FE%14
+29gains222by cache/%FE%14
+20gains185by cache/%FE%02
+20gains185by cache/%FE%02
+20gains185by cache/%FE%02
+18gains203by cache/%FE%14
+20gains185by cache/%FE%02
+25stores/%FE%12,which called/%FE%12
+25cache size1
+18gains203by cache/%FE%14
+20gains185by cache/%FE%02
+29gains222by cache/%FE%14
+20gains185by cache/%FE%02
+25gains216by cache/%FE%12
+
