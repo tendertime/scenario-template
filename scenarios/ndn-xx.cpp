@@ -40,10 +40,10 @@ main(int argc, char* argv[])
   cmd.Parse(argc, argv);
   
   AnnotatedTopologyReader topologyReader("", 25);
-  //topologyReader.SetFileName("./results/chinatelecom/chinatelecom.txt");//38
+  topologyReader.SetFileName("./results/chinatelecom/chinatelecom.txt");//38
   //topologyReader.SetFileName("./results/agis/agis.txt");//25
   //topologyReader.SetFileName("./results/garr/garr.txt");//47
-  topologyReader.SetFileName("./results/geant/geant.txt");//37
+  //topologyReader.SetFileName("./results/geant/geant.txt");//37
   topologyReader.Read();
 
   // Install NDN stack on all nodes
@@ -61,8 +61,8 @@ main(int argc, char* argv[])
   ndnGlobalRoutingHelper.InstallAll();
   
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerZipfMandelbrot");
-  consumerHelper.SetAttribute("NumberOfContents", StringValue("37"));
-  consumerHelper.SetAttribute("Frequency", StringValue("37"));
+  consumerHelper.SetAttribute("NumberOfContents", StringValue("38"));
+  consumerHelper.SetAttribute("Frequency", StringValue("38"));
   for (NodeList::Iterator node = NodeList::Begin(); node != NodeList::End(); node++)   
   {
       consumerHelper.Install(*node);
