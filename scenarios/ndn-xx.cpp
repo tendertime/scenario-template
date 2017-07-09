@@ -40,17 +40,18 @@ main(int argc, char* argv[])
   cmd.Parse(argc, argv);
   
   AnnotatedTopologyReader topologyReader("", 25);
-  topologyReader.SetFileName("./results/chinatelecom/chinatelecom.txt");//38
+  //topologyReader.SetFileName("./results/chinatelecom/chinatelecom.txt");//38
   //topologyReader.SetFileName("./results/agis/agis.txt");//25
   //topologyReader.SetFileName("./results/garr/garr.txt");//47
-  //topologyReader.SetFileName("./results/geant/geant.txt");//37
+  topologyReader.SetFileName("./results/geant/geant.txt");//37
   topologyReader.Read();
 
   // Install NDN stack on all nodes
   ndn::StackHelper ndnHelper;
-  ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize","4096");
+  //ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize","48");
   //ndnHelper.setCsSize(10240);
   //ndnHelper.setPolicy("nfd::cs::priority_fifo");
+  ndnHelper.SetOldContentStore("ns3::ndn::cs::Probability::Lru", "MaxSize","48","CacheProbability","0.1");
   ndnHelper.InstallAll();
 
   // Set BestRoute strategy
@@ -61,8 +62,8 @@ main(int argc, char* argv[])
   ndnGlobalRoutingHelper.InstallAll();
   
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerZipfMandelbrot");
-  consumerHelper.SetAttribute("NumberOfContents", StringValue("38"));
-  consumerHelper.SetAttribute("Frequency", StringValue("38"));
+  consumerHelper.SetAttribute("NumberOfContents", StringValue("37"));
+  consumerHelper.SetAttribute("Frequency", StringValue("37"));
   for (NodeList::Iterator node = NodeList::Begin(); node != NodeList::End(); node++)   
   {
       consumerHelper.Install(*node);
