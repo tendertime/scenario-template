@@ -42,53 +42,60 @@ main(int argc, char* argv[])
   AnnotatedTopologyReader topologyReader("", 25);
   //topologyReader.SetFileName("./results/chinatelecom/chinatelecom.txt");//38
   //topologyReader.SetFileName("./results/agis/agis.txt");//25
-  //topologyReader.SetFileName("./results/garr/garr.txt");//47
-  topologyReader.SetFileName("./results/geant/geant.txt");//37
+  topologyReader.SetFileName("./results/garr/garr.txt");//47
+  //topologyReader.SetFileName("./results/geant/geant.txt");//37
   topologyReader.Read();
 
   // Install NDN stack on all nodes
   ndn::StackHelper ndnHelper;
-  //ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize","48");
+  ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize","0");
   //ndnHelper.setCsSize(10240);
   //ndnHelper.setPolicy("nfd::cs::priority_fifo");
-  ndnHelper.SetOldContentStore("ns3::ndn::cs::Probability::Lru", "MaxSize","48","CacheProbability","0.1");
+ // ndnHelper.SetOldContentStore("ns3::ndn::cs::Probability::Lru", "MaxSize","0","CacheProbability","0.5");
   ndnHelper.InstallAll();
 
   // Set BestRoute strategy
   ndn::StrategyChoiceHelper::InstallAll("/", "/localhost/nfd/strategy/best-route");
-
+  
   // Installing global routing interface on all nodes
   ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
   ndnGlobalRoutingHelper.InstallAll();
   
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerZipfMandelbrot");
-  consumerHelper.SetAttribute("NumberOfContents", StringValue("37"));
-  consumerHelper.SetAttribute("Frequency", StringValue("37"));
+  consumerHelper.SetAttribute("NumberOfContents", StringValue("100"));
+  consumerHelper.SetAttribute("Frequency", StringValue("10"));
+  //consumerHelper.SetPrefix("");
+  NodeContainer consumerNodes;
+
+
   for (NodeList::Iterator node = NodeList::Begin(); node != NodeList::End(); node++)   
   {
-      consumerHelper.Install(*node);
-      //ApplicationContainer app = consumerHelper.Install(*node);
-      //app.Start(Seconds(0.01*(*node)->GetId()));
+    consumerNodes.Add(*node);
   }
+  //consumerHelper.SetPrefix("/");
+  //consumerHelper.Install(consumerNodes);
+
 
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetAttribute("PayloadSize", StringValue("1024"));
   for (NodeList::Iterator node = NodeList::Begin(); node != NodeList::End(); node++)
   {
     char buffer[10];
-    sprintf(buffer,"%02X",(*node)->GetId());
-    std::string str=buffer;
-    std::string prefix="/%FE%"+str;
+    uint32_t x=(*node)->GetId();
+    sprintf(buffer,"%02d",x);
+    std::string prefix=buffer;
+    //std::cout<<prefix<<endl;
     ndnGlobalRoutingHelper.AddOrigin(prefix, *node);
     producerHelper.SetPrefix(prefix);
     producerHelper.Install(*node);
-    //cout<<prefix<<endl;
+    consumerHelper.SetPrefix(prefix);
+    consumerHelper.Install(consumerNodes);
   }
-
+  
   // Calculate and install FIBs
   ndn::GlobalRoutingHelper::CalculateRoutes();
 
-  Simulator::Stop(Seconds(5.0));
+  Simulator::Stop(Seconds(10.0));
 
   //ndn::CsTracer::InstallAll("cs-trace-xx.txt", Seconds(1));
   //ndn::L3RateTracer::InstallAll("rate-trace.txt", Seconds(0.5));
