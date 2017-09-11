@@ -8,19 +8,36 @@
 using namespace std;
 int main()
 {
-    ifstream fin;
+    ifstream fin1,fin2,fin;
     //char a[2]={0};
-    fin.open("./xxx.txt",ios_base::in);
-    string s1,s2;
+    fin1.open("./xxx.txt",ios_base::in);
+    string s1,s2,s3,xx,yy,ss,dis;
     int x=0;
-    while(!fin.eof())
+    while(!fin1.eof())
     {
-        getline(fin,s1,'n');
-        getline(fin,s2,'\n');
-        const char *h=s2.c_str();
-        x+=atol(h);
+        getline(fin1,s1,'g');
+        getline(fin1,s2,' ');
+        getline(fin1,s3,'\n');
+        fin2.open("./result.txt",ios_base::in);
+        while(!fin2.eof())
+        {
+            getline(fin2,xx,' ');
+            getline(fin2,yy,' ');
+            getline(fin2,ss,' ');
+            getline(fin2,dis,'\n');
+            if(xx==s2)
+            {
+                if(s3.compare(0,3,yy)==0)
+                {
+                    const char *h=dis.c_str();
+                    x+=atol(h);
+                    break;
+                }
+            }
+        }
+        fin2.close();
     }
-    fin.close();
+    fin1.close();
     cout<<x<<endl<<endl;
     x=0;
     int a,m[50]={0};

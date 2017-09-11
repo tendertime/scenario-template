@@ -22,14 +22,14 @@ int main()
             h=s2.c_str();
             while(h[5]!='/')
             {
-                if(h[18]=='3'&&h[19]=='1')
+                if(h[18]=='3'&&h[19]=='0')
                 {
                     i=22;
                     while(h[i]!='<')
                         printf("%c",h[i++]);
                     cout<<"       ";
                 }
-                if(h[18]=='3'&&h[19]=='3')
+                if(h[18]=='3'&&h[19]=='4')
                 {
                     i=22;
                     while(h[i]!='<')
@@ -57,12 +57,12 @@ int main()
             h=s2.c_str();
             while(h[5]!='/')
             {
-                if(h[18]=='3'&&h[19]=='6')
+                if(h[18]=='3'&&h[19]=='7')
                 {
                     i=22;
                     while(h[i]!='<')
                         printf("%c",h[i++]);
-                    cout<<"       ";
+                    cout<<"bps";
                 }
                 getline(fin,s2,'\n');
                 h=s2.c_str();
